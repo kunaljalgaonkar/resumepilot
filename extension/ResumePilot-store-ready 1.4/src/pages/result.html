@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Result · TrueResume</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="../../styles/base.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="topbar"></div>
+
+    <main class="flex-1" style="flex:1">
+      <div class="container" style="padding:32px 24px">
+        <a href="history.html" class="text-sm text-muted" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px" id="backLink"></a>
+
+        <div class="mt-3" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px">
+          <div>
+            <div class="label-overline mb-2">Tailoring result</div>
+            <h1 class="text-4xl font-black tracking-tight" id="jobTitle"></h1>
+            <div class="mono text-xs text-muted mt-1" id="createdAt"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="resultActions">
+            <button id="openResume" class="btn btn-outline"></button>
+            <div class="dropdown">
+              <button class="btn" data-toggle="dlMenu" id="dlBtn"></button>
+              <div class="dropdown-menu" id="dlMenu">
+                <button class="dropdown-item" data-act="download-resume-pdf"></button>
+                <button class="dropdown-item" data-act="download-resume-docx"></button>
+                <button class="dropdown-item hidden" data-act="download-cover-pdf" id="dlCover"></button>
+                <button class="dropdown-item hidden" data-act="download-cover-docx" id="dlCoverDocx"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ATS bento -->
+        <div class="bento mt-8" id="bento"></div>
+
+        <!-- Tabs -->
+        <div class="mt-10">
+          <div class="tabs" id="tabs"></div>
+          <div id="tabResume" class="tab-panel"></div>
+          <div id="tabCompare" class="tab-panel"></div>
+          <div id="tabChanges" class="tab-panel"></div>
+          <div id="tabCover" class="tab-panel"></div>
+          <div id="tabQa" class="tab-panel"></div>
+          <div id="tabRaw" class="tab-panel"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+  </div>
+
+  <script type="module" src="../../src/scripts/result.js"></script>
+</body>
+</html>

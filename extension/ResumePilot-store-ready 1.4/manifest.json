@@ -1,0 +1,65 @@
+{
+  "manifest_version": 3,
+  "name": "ResumePilot – AI Resume Tailor",
+  "version": "1.0.5",
+  "description": "Instantly tailors your resume and writes a cover letter for any job you apply to.",
+  "permissions": [
+    "storage",
+    "identity"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "oauth2": {
+    "client_id": "48552588060-1pe5jrridenreb5i1no7bl4u1s3l87lm.apps.googleusercontent.com",
+    "scopes": ["openid", "email", "profile"]
+  },
+  "background": {
+    "service_worker": "src/background/worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["src/content/detector.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' https://fonts.gstatic.com https://api.fontshare.com https://cdn.fontshare.com; img-src 'self' data: https:; connect-src 'self' https:;"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/pages/landing.html",
+        "src/pages/app.html",
+        "src/pages/auth.html",
+        "src/pages/history.html",
+        "src/pages/result.html",
+        "src/pages/plans.html",
+        "src/pages/plans.js",
+        "src/pages/tracker.html",
+        "src/pages/tracker.js",
+        "src/onboarding/onboarding.html",
+        "src/floating/panel.html",
+        "src/floating/panel.css",
+        "src/floating/panel.js"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

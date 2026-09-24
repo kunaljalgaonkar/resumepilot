@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ResumePilot — Application Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#080b14;--surface:#0e1220;--surface2:#141827;
+      --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+      --text:#dde2f3;--text-2:#6b7698;
+      --blue:#4f7cff;--blue-glow:rgba(79,124,255,0.18);
+      --purple:#9060ff;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+    }
+    html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;}
+    body::before{content:'';position:fixed;top:0;left:0;right:0;height:400px;background:radial-gradient(ellipse 60% 40% at 50% -5%,rgba(79,124,255,0.1) 0%,transparent 70%);pointer-events:none;z-index:0;}
+    .page{max-width:900px;margin:0 auto;padding:48px 32px 80px;position:relative;z-index:1;}
+
+    /* Top bar */
+    .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;}
+    .brand{display:flex;align-items:center;gap:10px;}
+    .brand-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 16px var(--blue-glow);}
+    .brand-name{font-size:16px;font-weight:700;}
+    .top-actions{display:flex;gap:10px;}
+    .btn{font-family:inherit;font-size:13px;font-weight:500;border:none;border-radius:8px;padding:8px 16px;cursor:pointer;transition:all 0.15s;}
+    .btn-outline{background:none;color:var(--text-2);border:1px solid var(--border2);}
+    .btn-outline:hover{color:var(--text);border-color:var(--blue);}
+    .btn-primary{background:linear-gradient(135deg,#3a63e0,var(--blue));color:white;box-shadow:0 2px 12px var(--blue-glow);}
+    .btn-primary:hover{opacity:0.9;}
+
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+    .stat-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px;}
+    .stat-value{font-size:32px;font-weight:800;letter-spacing:-1px;}
+    .stat-sub{font-size:12px;color:var(--text-2);margin-top:4px;}
+    .blue{color:var(--blue);} .green{color:var(--green);}
+
+    /* Filter bar */
+    .filter-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px;}
+    .search-input{flex:1;background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:9px 14px;font-family:inherit;font-size:13px;color:var(--text);outline:none;}
+    .search-input:focus{border-color:var(--blue);}
+    .search-input::placeholder{color:var(--text-2);}
+    .filter-select{background:var(--surface);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;color:var(--text);cursor:pointer;outline:none;}
+
+    /* Table */
+    .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+    .table-head{display:grid;grid-template-columns:1fr 160px 120px 110px 80px;padding:10px 20px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-2);}
+    .app-row{display:grid;grid-template-columns:1fr 160px 120px 110px 80px;padding:14px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background 0.1s;}
+    .app-row:last-child{border-bottom:none;}
+    .app-row:hover{background:rgba(255,255,255,0.02);}
+    .app-company{font-weight:700;font-size:14px;}
+    .app-role{font-size:12px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px;}
+    .app-date{font-size:13px;color:var(--text-2);font-family:'DM Mono',monospace;}
+    .row-actions{display:flex;gap:6px;opacity:0;transition:opacity 0.15s;}
+    .app-row:hover .row-actions{opacity:1;}
+    .row-btn{background:none;border:none;color:var(--text-2);font-size:14px;cursor:pointer;padding:2px 4px;border-radius:4px;}
+    .row-btn:hover{color:var(--text);background:var(--surface2);}
+
+    /* Empty state */
+    .empty-state{text-align:center;padding:60px 20px;}
+    .empty-icon{font-size:48px;margin-bottom:16px;opacity:0.6;}
+    .empty-title{font-size:20px;font-weight:700;margin-bottom:8px;}
+    .empty-body{font-size:14px;color:var(--text-2);line-height:1.6;max-width:380px;margin:0 auto 24px;}
+
+    /* Toast */
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:10px 20px;font-size:13px;opacity:0;transition:all 0.25s;z-index:100;}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(8,11,20,0.8);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+    .modal-overlay.show{opacity:1;pointer-events:all;}
+    .modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:32px;max-width:440px;width:100%;}
+    .modal-title{font-size:18px;font-weight:700;margin-bottom:20px;}
+    .field{margin-bottom:14px;}
+    .field label{display:block;font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:5px;letter-spacing:0.05em;text-transform:uppercase;}
+    .field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;color:var(--text);outline:none;}
+    .field input:focus,.field select:focus{border-color:var(--blue);}
+    .modal-actions{display:flex;gap:10px;margin-top:20px;}
+    .modal-actions .btn{flex:1;}
+    /* Tabs */
+    .tab-bar{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);}
+    .tab-btn{font-family:inherit;font-size:13px;font-weight:600;color:var(--text-2);background:none;border:none;padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;}
+    .tab-btn:hover{color:var(--text);}
+    .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
+    .tab-panel{display:none;}
+    .tab-panel.active{display:block;}
+
+    /* Skills to prepare */
+    .prep-row{display:grid;grid-template-columns:1fr 200px 140px 90px;padding:14px 20px;border-bottom:1px solid var(--border);align-items:center;gap:10px;}
+    .prep-row:last-child{border-bottom:none;}
+    .prep-skill{font-weight:700;font-size:14px;}
+    .prep-context{font-size:12px;color:var(--text-2);}
+    .prep-badge{font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;width:fit-content;}
+    .prep-badge.familiar{background:rgba(245,158,11,0.15);color:var(--amber);}
+    .prep-badge.declined{background:rgba(107,118,152,0.2);color:var(--text-2);}
+    .prep-link{font-size:12px;color:var(--blue);text-decoration:none;}
+    .prep-link:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+<div class="page">
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-mark">✦</div>
+      <span class="brand-name">Application Tracker</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-outline" id="btn-back">← Back</button>
+      <button class="btn btn-primary" id="btn-add-manual">+ Add manually</button>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-btn-applications" data-tab="applications">Applications</button>
+    <button class="tab-btn" id="tab-btn-skills" data-tab="skills">Skills to Prepare</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-applications">
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Total Applied</div><div class="stat-value blue" id="stat-total">0</div><div class="stat-sub">all time</div></div>
+    <div class="stat-card"><div class="stat-label">This Week</div><div class="stat-value" id="stat-week">0</div><div class="stat-sub">applications</div></div>
+    <div class="stat-card"><div class="stat-label">Interviews</div><div class="stat-value green" id="stat-interviews">0</div><div class="stat-sub">in progress</div></div>
+    <div class="stat-card"><div class="stat-label">Offers</div><div class="stat-value green" id="stat-offers">0</div><div class="stat-sub">received</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <input class="search-input" id="search" placeholder="Search by company or role…">
+    <select class="filter-select" id="filter-status">
+      <option value="">All statuses</option>
+      <option value="applied">Applied</option>
+      <option value="interview">Interview</option>
+      <option value="offer">Offer</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <select class="filter-select" id="filter-period">
+      <option value="">All time</option>
+      <option value="week">This week</option>
+      <option value="month">This month</option>
+    </select>
+  </div>
+
+  <div class="table-wrap">
+    <div class="table-head">
+      <div>Company / Role</div><div>Date applied</div><div>Status</div><div>Source</div><div></div>
+    </div>
+    <div id="app-list"></div>
+  </div>
+  </div>
+
+  <div class="tab-panel" id="tab-skills">
+    <div class="table-wrap">
+      <div class="table-head" style="grid-template-columns:1fr 200px 140px 90px;">
+        <div>Skill</div><div>From job</div><div>Status</div><div>Learn</div>
+      </div>
+      <div id="prep-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">Add application manually</div>
+    <div class="field"><label>Company</label><input id="m-company" placeholder="e.g. Stripe" type="text"></div>
+    <div class="field"><label>Role / Job title</label><input id="m-role" placeholder="e.g. Senior Software Engineer" type="text"></div>
+    <div class="field"><label>Date applied</label><input id="m-date" type="date"></div>
+    <div class="field"><label>Status</label>
+      <select id="m-status">
+        <option value="applied">Applied</option>
+        <option value="interview">Interview</option>
+        <option value="offer">Offer</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+    <div class="field"><label>Job URL (optional)</label><input id="m-url" type="url" placeholder="https://…"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" id="btn-cancel-modal">Cancel</button>
+      <button class="btn btn-primary" id="btn-save-modal">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="tracker.js"></script>
+</body>
+</html>

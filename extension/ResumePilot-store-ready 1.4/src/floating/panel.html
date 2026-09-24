@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ResumePilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="panel.css">
+</head>
+<body>
+
+  <!-- Sticky header spans full width -->
+  <div class="panel-header">
+    <div class="panel-brand">
+      <div class="panel-mark">✦</div>
+      <span>ResumePilot</span>
+    </div>
+    <div style="display:flex;gap:4px;align-items:center">
+      <div id="jd-dot-header" class="jd-dot-header"></div>
+      <span id="jd-label-header" class="jd-label-header">Scanning…</span>
+      <!-- Profile hub button -->
+      <button id="btn-profile-hub" class="icon-btn" style="margin-left:6px;font-size:13px" title="Profile & settings">👤</button>
+      <button id="btn-minimize" class="icon-btn">−</button>
+    </div>
+  </div>
+
+  <!-- Profile hub dropdown -->
+  <div id="profile-hub-menu" class="hub-menu hidden">
+    <div class="hub-user-row" id="hub-user-row">
+      <div class="hub-avatar">✦</div>
+      <div>
+        <div class="hub-name" id="hub-name">Guest</div>
+        <div class="hub-plan" id="hub-plan">Free plan</div>
+      </div>
+    </div>
+    <div class="hub-divider"></div>
+    <button class="hub-item" id="hub-btn-profile">
+      <span>📄</span><span>Edit Resume & Profile</span>
+    </button>
+    <button class="hub-item" id="hub-btn-tracker">
+      <span>📋</span><span>Application Tracker</span>
+    </button>
+    <button class="hub-item" id="hub-btn-plans">
+      <span>✦</span><span>Plans & Billing</span>
+    </button>
+    <div class="hub-divider"></div>
+    <button class="hub-item hub-item--danger" id="hub-btn-signout">
+      <span>↩</span><span>Sign out</span>
+    </button>
+  </div>
+
+  <!-- Quote strip (full width, below header) -->
+  <div id="quote-strip" class="quote-strip hidden">
+    <span class="quote-strip-icon">✦</span>
+    <div class="quote-strip-text">
+      <span id="quote-body" class="quote-body-text"></span>
+      <span id="quote-author" class="quote-author-text"></span>
+    </div>
+  </div>
+
+  <!-- No profile state (full width) -->
+  <div id="no-profile" class="state-card hidden">
+    <div class="state-icon">📄</div>
+    <div class="state-text">No resume uploaded yet.<br>Set up your profile to get started.</div>
+    <button id="btn-setup-fab" class="btn-primary" style="margin-top:12px">Set up profile →</button>
+  </div>
+
+  <!-- Two-column main area -->
+  <div id="main-area" class="main-columns hidden">
+
+    <!-- LEFT COLUMN: Resume / Tailor -->
+    <div class="col-left">
+      <div id="profile-chip" class="profile-chip hidden">
+        <span>✦</span><span id="chip-name"></span>
+      </div>
+      <div id="no-jd-msg" class="no-jd-msg hidden">No job description found on this page.</div>
+
+      <button id="btn-tailor-fab" class="btn-tailor hidden">⚡ Tailor for This Job</button>
+
+      <div id="progress-area" class="hidden">
+        <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+        <div class="progress-text" id="progress-text">Analysing…</div>
+      </div>
+
+      <div id="result-area" class="result-area hidden">
+        <div class="result-row">
+          <span class="result-label">Tailored ✓</span>
+          <div style="display:flex;gap:5px">
+            <button id="btn-download-fab" class="btn-sm-outline">⬇</button>
+            <button id="btn-inject-fab" class="btn-sm-primary">↑ Inject</button>
+          </div>
+        </div>
+        <div class="result-row" style="border-top:1px solid var(--border)">
+          <span class="result-label-sm">Cover letter</span>
+          <button id="btn-gen-cl-fab" class="btn-sm-outline">✦ Generate</button>
+        </div>
+        <div id="cl-progress-area" class="hidden" style="margin-top:4px;padding:0 12px;">
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="cl-progress-fill"></div></div>
+          <div class="progress-text" id="cl-progress-text">Generating…</div>
+        </div>
+        <div id="cl-output" class="cl-output hidden">
+          <div class="cl-output-header">
+            <span class="cl-output-label">Cover Letter</span>
+            <div style="display:flex;gap:4px;align-items:center">
+              <button id="btn-cl-download-fab" class="btn-sm-outline" title="Download as PDF">⬇ PDF</button>
+              <button id="btn-cl-inject-fab" class="btn-sm-primary" title="Inject into cover letter field on form">↑ Inject</button>
+              <button id="btn-cl-copy-fab" class="btn-sm-outline" title="Copy to clipboard">⎘</button>
+              <button id="btn-cl-collapse" class="cl-collapse-btn" title="Collapse preview">−</button>
+            </div>
+          </div>
+          <div id="cl-preview-fab" class="cl-preview-text"></div>
+        </div>
+        <div id="fab-ats-prompt" class="mini-ats-prompt hidden">
+          <span id="fab-ats-count" class="mini-ats-count"></span>
+          <button id="btn-fab-evaluate" class="btn-sm-outline btn-xs">✦ Evaluate</button>
+        </div>
+        <div id="eval-progress-area" class="hidden" style="margin-top:8px;padding:0 12px;">
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="eval-progress-fill"></div></div>
+          <div class="progress-text" id="eval-progress-text">Evaluating…</div>
+        </div>
+        <div id="fab-ats-result" class="mini-ats-result hidden">
+          <div class="mini-ats-score-row">
+            <span>Match</span>
+            <span id="fab-ats-score" class="mini-score"></span>
+          </div>
+          <div id="fab-ats-missing"></div>
+          <button id="btn-reevaluate" class="btn-reevaluate hidden">↻ Re-evaluate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Chatbot -->
+    <div class="col-right">
+      <div class="chat-header">
+        <span id="ai-star-icon" class="ai-star-icon">✦</span>
+        <span class="chat-header-label">AI Assistant</span>
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div id="quick-actions" class="chat-quick-actions"></div>
+      <div class="chat-input-row">
+        <input id="chat-input" class="chat-input" placeholder="Ask to change resume…" autocomplete="off">
+        <button id="btn-chat-send" class="chat-send-btn">↑</button>
+      </div>
+    </div>
+
+  </div><!-- /main-columns -->
+
+  <!-- Footer -->
+  <div id="panel-footer" class="panel-footer hidden">
+    <span id="footer-user" class="footer-user"></span>
+    <div style="display:flex;gap:8px">
+      <button id="btn-footer-plans" class="footer-link">Plans</button>
+      <button id="btn-footer-signout" class="footer-link">Sign out</button>
+    </div>
+  </div>
+
+  <!-- Break reminder overlay -->
+  <div id="break-overlay" class="break-overlay hidden">
+    <div class="break-card">
+      <div class="break-card-icon">☕</div>
+      <div class="break-card-title">Time for a quick breather?</div>
+      <div class="break-card-body">You've been at this a while. A few minutes away helps you come back sharper.</div>
+      <div class="break-card-actions">
+        <button id="btn-take-break" class="btn-primary" style="width:100%;justify-content:center;display:flex">Take a break</button>
+        <button id="btn-keep-going" class="break-keep-btn">I'll keep going</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="error-msg" class="error-msg hidden"></div>
+  <script src="panel.js"></script>
+</body>
+</html>

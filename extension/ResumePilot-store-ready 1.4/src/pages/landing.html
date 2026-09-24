@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>TrueResume — ATS Tailoring Engine</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="../../styles/base.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Header -->
+    <header style="border-bottom:1px solid var(--border)">
+      <div class="topbar-inner" style="background:white">
+        <a class="brand" href="landing.html" id="navLogo">
+          <div class="mark"><svg viewBox="0 0 256 256"><path fill="white" d="M128 24l24 80 80 24-80 24-24 80-24-80-80-24 80-24z"/></svg></div>
+          <div class="name"><strong>TRUERESUME</strong><span>ATS Tailoring Engine</span></div>
+        </a>
+        <div style="display:flex;align-items:center;gap:8px">
+          <a class="btn btn-ghost btn-sm" href="auth.html#login">Sign in</a>
+          <a class="btn btn-sm" href="auth.html#register">Get started</a>
+        </div>
+      </div>
+    </header>
+
+    <main style="flex:1">
+      <!-- HERO with grid background -->
+      <section class="grid-bg" style="border-bottom:1px solid var(--border);position:relative">
+        <div class="container" style="padding:80px 24px;display:grid;grid-template-columns:repeat(12,1fr);gap:40px">
+          <div class="hero-left" style="grid-column:span 7">
+            <div class="label-overline" style="margin-bottom:24px">v1.0 · Truthfulness-first AI</div>
+            <h1 class="hero-title">
+              Tailor your resume.<br />
+              <span class="text-ikb">Never fabricate</span> a thing.
+            </h1>
+            <p class="mt-6 text-lg text-muted" style="max-width:640px;line-height:1.6">
+              Upload your resume, paste the job description, and get a tailored resume, ATS match analysis,
+              cover letter, and application answers — built strictly from
+              <strong style="color:var(--fg)">your real experience</strong>. Nothing invented.
+              Nothing assumed.
+            </p>
+            <div class="mt-8" style="display:flex;flex-wrap:wrap;gap:12px">
+              <a class="btn btn-lg" href="auth.html#register" id="ctaPrimary"></a>
+              <a class="btn btn-outline btn-lg" href="auth.html#login">I already have an account</a>
+            </div>
+
+            <div class="mt-10" style="display:flex;flex-wrap:wrap;gap:24px;font-size:14px">
+              <div style="display:flex;align-items:center;gap:8px" id="bullet1"></div>
+              <div style="display:flex;align-items:center;gap:8px" id="bullet2"></div>
+              <div style="display:flex;align-items:center;gap:8px" id="bullet3"></div>
+            </div>
+          </div>
+
+          <!-- ATS preview card -->
+          <div class="hero-right" style="grid-column:span 5">
+            <div style="border:1px solid var(--border);background:white;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+              <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:16px">
+                <div class="label-overline">ATS Match Score</div>
+                <div class="mono text-xs text-muted">live preview</div>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:12px">
+                <div class="text-6xl font-black tracking-tighter" style="line-height:1">87</div>
+                <div class="text-sm text-muted" style="padding-bottom:8px">/ 100</div>
+              </div>
+              <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div style="border:1px solid var(--border);padding:12px;font-size:12px">
+                  <div class="label-overline" style="margin-bottom:4px">Matched</div>
+                  <div class="text-success font-bold">14 skills</div>
+                </div>
+                <div style="border:1px solid var(--border);padding:12px;font-size:12px">
+                  <div class="label-overline" style="margin-bottom:4px">Missing</div>
+                  <div class="text-error font-bold">3 reqs</div>
+                </div>
+              </div>
+              <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:8px">
+                <div class="mono text-xs text-muted">+ Reordered Projects by relevance</div>
+                <div class="mono text-xs text-muted">+ Rewrote 6 bullets for keyword alignment</div>
+                <div class="mono text-xs text-muted">− Removed unrelated section</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature cards -->
+      <section style="border-bottom:1px solid var(--border)">
+        <div class="container" style="padding:80px 24px">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)" id="featGrid"></div>
+        </div>
+      </section>
+
+      <!-- How it works + bottom CTA -->
+      <section>
+        <div class="container" style="padding:80px 24px">
+          <div class="label-overline mb-2">How it works</div>
+          <h2 class="text-4xl font-black tracking-tight">Three steps. Zero fabrication.</h2>
+
+          <div class="mt-10" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)" id="stepsGrid"></div>
+
+          <!-- Dark CTA -->
+          <div class="mt-10" style="border:1px solid var(--neutral-900);background:var(--neutral-900);color:white;padding:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+            <div>
+              <div class="label-overline" style="color:#a3a3a3;margin-bottom:8px">Ready when you are</div>
+              <h3 class="text-3xl font-black tracking-tight" style="line-height:1.15">Turn your real experience into your best application.</h3>
+            </div>
+            <a class="btn btn-light btn-lg" href="auth.html#register" id="bottomCta"></a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div style="display:flex;align-items:center;gap:8px" id="footerLeft"></div>
+        <div class="mono">© <span id="yr"></span> TrueResume</div>
+      </div>
+    </footer>
+  </div>
+
+  <style>
+    .hero-title {
+      font-family: "Cabinet Grotesk", sans-serif;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      font-size: 60px;
+    }
+    @media (min-width: 1024px) {
+      .hero-title { font-size: 84px; }
+    }
+    @media (max-width: 1024px) {
+      .hero-left, .hero-right { grid-column: span 12 !important; }
+    }
+    @media (max-width: 720px) {
+      .hero-title { font-size: 44px; }
+      #featGrid, #stepsGrid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+
+  <script type="module" src="../../src/scripts/landing.js"></script>
+</body>
+</html>

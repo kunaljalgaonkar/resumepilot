@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ResumePilot — Plans</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080b14; --surface: #0e1220; --surface2: #141827;
+      --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+      --text: #dde2f3; --text-2: #6b7698;
+      --blue: #4f7cff; --blue-glow: rgba(79,124,255,0.2);
+      --purple: #9060ff; --green: #22c55e; --amber: #f59e0b;
+      --radius: 16px; --radius-sm: 10px;
+    }
+    html, body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+    body::before { content: ''; position: fixed; top: 0; left: 0; right: 0; height: 500px; background: radial-gradient(ellipse 60% 40% at 50% -5%, rgba(79,124,255,0.12) 0%, transparent 70%); pointer-events: none; z-index: 0; }
+
+    .page { max-width: 1020px; margin: 0 auto; padding: 60px 32px 80px; position: relative; z-index: 1; }
+
+    /* ── Header ── */
+    .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 56px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-mark { width: 36px; height: 36px; background: linear-gradient(135deg, var(--blue), var(--purple)); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 20px var(--blue-glow); }
+    .brand-name { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+    .user-pill { display: flex; align-items: center; gap: 8px; padding: 6px 14px; background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; font-size: 13px; }
+    .user-plan-badge { background: rgba(79,124,255,0.2); color: var(--blue); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; letter-spacing: 0.05em; }
+
+    /* ── Hero ── */
+    .hero { text-align: center; margin-bottom: 48px; }
+    .hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); margin-bottom: 14px; }
+    .hero-h1 { font-size: 44px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 18px; background: linear-gradient(135deg, #ffffff 0%, var(--text) 60%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 17px; color: var(--text-2); line-height: 1.65; max-width: 520px; margin: 0 auto; }
+
+    /* ── Billing toggle ── */
+    .billing-toggle { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 40px; font-size: 14px; color: var(--text-2); }
+    .toggle-pill { position: relative; width: 48px; height: 26px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 13px; cursor: pointer; transition: background 0.2s; }
+    .toggle-pill.annual { background: var(--blue); }
+    .toggle-pill::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: transform 0.2s; }
+    .toggle-pill.annual::after { transform: translateX(22px); }
+    .badge-save { background: rgba(34,197,94,0.18); color: var(--green); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; border: 1px solid rgba(34,197,94,0.3); }
+
+    /* ── Plan cards ── */
+    .plans { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 56px; }
+    .plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; position: relative; transition: border-color 0.2s; }
+    .plan-card.featured { border-color: rgba(79,124,255,0.5); background: linear-gradient(160deg, rgba(79,124,255,0.08) 0%, var(--surface) 50%); box-shadow: 0 0 40px rgba(79,124,255,0.12); }
+    .plan-card.current-plan { border-color: var(--green) !important; }
+    .featured-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--blue), var(--purple)); color: white; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 20px; white-space: nowrap; }
+    .current-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--green); color: white; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 20px; white-space: nowrap; }
+    .plan-name { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 8px; }
+    .plan-price { font-size: 40px; font-weight: 800; letter-spacing: -1.5px; line-height: 1; margin-bottom: 4px; }
+    .plan-price sup { font-size: 20px; font-weight: 600; vertical-align: super; }
+    .plan-price span { font-size: 16px; font-weight: 400; color: var(--text-2); }
+    .plan-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+    .features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; flex: 1; }
+    .feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; line-height: 1.45; }
+    .feature-check { color: var(--green); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .feature-x { color: var(--text-2); font-size: 14px; flex-shrink: 0; margin-top: 1px; opacity: 0.35; }
+    .feature-muted { color: var(--text-2); }
+    .plan-btn { width: 100%; padding: 12px; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+    .plan-btn.free-btn { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+    .plan-btn.free-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .plan-btn.pro-btn { background: linear-gradient(135deg, #3a63e0, var(--blue)); color: white; box-shadow: 0 4px 20px rgba(79,124,255,0.35); }
+    .plan-btn.pro-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(79,124,255,0.5); }
+    .plan-btn.teams-btn { background: none; border: 1px solid var(--border2); color: var(--text); }
+    .plan-btn.teams-btn:hover { border-color: var(--purple); color: var(--purple); }
+    .plan-btn.current-btn { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); cursor: default; }
+
+    /* ── Usage meter (shown when user is logged in) ── */
+    .usage-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 28px; margin-bottom: 40px; display: none; }
+    .usage-card.show { display: block; }
+    .usage-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+    .usage-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .usage-item { }
+    .usage-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 6px; }
+    .usage-bar-wrap { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+    .usage-bar { height: 100%; border-radius: 3px; background: var(--blue); transition: width 0.5s; }
+    .usage-bar.warning { background: var(--amber); }
+    .usage-bar.full { background: #ef4444; }
+    .usage-numbers { font-size: 12px; color: var(--text-2); }
+    .usage-numbers span { color: var(--text); font-weight: 600; }
+
+    /* ── Compare table ── */
+    .compare-section { margin-bottom: 56px; }
+    .compare-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 24px; }
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th { text-align: left; padding: 10px 14px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-2); border-bottom: 1px solid var(--border2); }
+    .compare-table th:not(:first-child) { text-align: center; }
+    .compare-table td { padding: 13px 14px; font-size: 13.5px; border-bottom: 1px solid var(--border); }
+    .compare-table td:not(:first-child) { text-align: center; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .check { color: var(--green); }
+    .cross { color: var(--text-2); opacity: 0.35; }
+
+    /* ── FAQ ── */
+    .faq-section { margin-bottom: 56px; }
+    .faq-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 20px; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-q { padding: 18px 0; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-q::after { content: '+'; font-size: 20px; color: var(--text-2); transition: transform 0.2s; flex-shrink: 0; }
+    .faq-q.open::after { transform: rotate(45deg); }
+    .faq-a { font-size: 14px; color: var(--text-2); line-height: 1.7; padding-bottom: 18px; display: none; }
+    .faq-a.open { display: block; }
+
+    /* ── Footer ── */
+    .plans-footer { text-align: center; font-size: 13px; color: var(--text-2); }
+    .plans-footer a { color: var(--blue); text-decoration: none; }
+
+    /* ── Coming soon modal ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(8,11,20,0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+    .modal { background: var(--surface); border: 1px solid var(--border2); border-radius: 20px; padding: 48px 40px; max-width: 480px; width: 100%; text-align: center; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: var(--text-2); font-size: 22px; cursor: pointer; }
+    .modal-close:hover { color: var(--text); }
+    .modal-icon { font-size: 52px; margin-bottom: 16px; filter: drop-shadow(0 0 20px rgba(79,124,255,0.4)); }
+    .modal-title { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 10px; background: linear-gradient(135deg, #fff, var(--text)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .modal-body { font-size: 15px; color: var(--text-2); line-height: 1.7; margin-bottom: 28px; }
+    .modal-body strong { color: var(--text); }
+    .modal-plan-name { display: inline-block; background: linear-gradient(135deg, var(--blue), var(--purple)); color: white; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 12px; margin-bottom: 16px; letter-spacing: 0.05em; }
+    .modal-notify-form { display: flex; gap: 8px; margin-top: 20px; }
+    .modal-notify-input { flex: 1; background: var(--surface2); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 14px; font-family: inherit; font-size: 14px; color: var(--text); outline: none; }
+    .modal-notify-input:focus { border-color: var(--blue); }
+    .modal-notify-input::placeholder { color: var(--text-2); }
+    .modal-notify-btn { background: linear-gradient(135deg, #3a63e0, var(--blue)); color: white; border: none; border-radius: 8px; padding: 10px 18px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .modal-notify-btn:hover { opacity: 0.9; }
+    .modal-notify-success { color: var(--green); font-size: 13px; margin-top: 10px; display: none; }
+
+    /* ── Toast ── */
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 22px; font-size: 14px; opacity: 0; transition: all 0.25s; z-index: 200; white-space: nowrap; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-mark">✦</div>
+      <span class="brand-name">ResumePilot</span>
+    </div>
+    <div class="user-pill" id="user-pill" style="display:none">
+      <span id="user-name-display"></span>
+      <span class="user-plan-badge" id="user-plan-badge">FREE</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Pricing</div>
+    <h1 class="hero-h1">Land the job.<br>Not the bill.</h1>
+    <p class="hero-sub">Start free. Upgrade when your job search gets serious. Every plan uses the same AI — no quality difference.</p>
+  </div>
+
+  <!-- Billing toggle -->
+  <div class="billing-toggle">
+    <span>Monthly</span>
+    <div class="toggle-pill annual" id="billing-toggle"></div>
+    <span>Annual <span class="badge-save">Save 30%</span></span>
+  </div>
+
+  <!-- Usage meter (shown when signed in) -->
+  <div class="usage-card" id="usage-card">
+    <div class="usage-title">Your usage this period</div>
+    <div class="usage-grid">
+      <div class="usage-item">
+        <div class="usage-label">ATS Analyses</div>
+        <div class="usage-bar-wrap"><div class="usage-bar" id="ats-bar" style="width:0%"></div></div>
+        <div class="usage-numbers"><span id="ats-used">0</span> / <span id="ats-limit">6</span> used</div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-label">Resume Tailoring</div>
+        <div class="usage-bar-wrap"><div class="usage-bar" style="width:15%"></div></div>
+        <div class="usage-numbers"><span>Unlimited</span></div>
+      </div>
+      <div class="usage-item">
+        <div class="usage-label">Applications logged</div>
+        <div class="usage-bar-wrap"><div class="usage-bar" id="app-bar" style="width:0%"></div></div>
+        <div class="usage-numbers"><span id="app-count">0</span> this period</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plan cards -->
+  <div class="plans">
+
+    <!-- Free -->
+    <div class="plan-card" id="card-free">
+      <div class="plan-name">Free</div>
+      <div class="plan-price"><sup>$</sup>0<span> / mo</span></div>
+      <div class="plan-desc">Get a feel for the product. Perfect for your first few applications.</div>
+      <div class="features">
+        <div class="feature"><span class="feature-check">✓</span><span><strong>6 ATS match analyses</strong></span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Unlimited resume tailoring</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Floating AI panel on job pages</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>PDF + DOCX download</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Cover letter generation</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Auto-inject to application forms</span></div>
+        <div class="feature"><span class="feature-x">✕</span><span class="feature-muted">Resume chatbot edits</span></div>
+        <div class="feature"><span class="feature-x">✕</span><span class="feature-muted">Application tracker</span></div>
+        <div class="feature"><span class="feature-x">✕</span><span class="feature-muted">Priority support</span></div>
+      </div>
+      <button class="plan-btn free-btn" id="btn-free">Continue free</button>
+    </div>
+
+    <!-- Pro -->
+    <div class="plan-card featured" id="card-pro">
+      <div class="featured-badge" id="pro-badge">✦ Most Popular</div>
+      <div class="plan-name">Pro</div>
+      <div class="plan-price" id="pro-price"><sup>$</sup>16.99<span> / mo</span></div>
+      <div class="plan-desc">For active job seekers who want the full toolkit — and real confidence walking into interviews.</div>
+      <div class="features">
+        <div class="feature"><span class="feature-check">✓</span><span><strong>Unlimited ATS analyses</strong></span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Unlimited resume tailoring</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Floating AI panel on job pages</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>PDF + DOCX download</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Cover letter generation</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Auto-inject to application forms</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span><strong>Resume chatbot edits</strong></span></div>
+        <div class="feature"><span class="feature-check">✓</span><span><strong>Application tracker</strong></span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Email support</span></div>
+      </div>
+      <button class="plan-btn pro-btn" id="btn-pro">Get Pro — <span id="pro-cta-price">$16.99/mo</span></button>
+    </div>
+
+    <!-- Teams -->
+    <div class="plan-card" id="card-teams">
+      <div class="plan-name">Teams</div>
+      <div class="plan-price"><sup>$</sup>9<span> / seat / mo</span></div>
+      <div class="plan-desc">For bootcamps, universities, and career coaches running students through the job search process.</div>
+      <div class="features">
+        <div class="feature"><span class="feature-check">✓</span><span>Everything in Pro</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Team admin dashboard</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Bulk seat management</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Usage analytics per member</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Custom onboarding</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Dedicated Slack support</span></div>
+        <div class="feature"><span class="feature-check">✓</span><span>Volume discounts from 5+ seats</span></div>
+      </div>
+      <button class="plan-btn teams-btn" id="btn-teams">Contact us</button>
+    </div>
+
+  </div>
+
+  <!-- Compare -->
+  <div class="compare-section">
+    <div class="compare-title">Everything compared</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th><th>Free</th><th>Pro</th><th>Teams</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Resume tailoring (AI)</td><td class="check">✓ Unlimited</td><td class="check">✓ Unlimited</td><td class="check">✓ Unlimited</td></tr>
+        <tr><td>ATS match analysis</td><td>6 total</td><td class="check">✓ Unlimited</td><td class="check">✓ Unlimited</td></tr>
+        <tr><td>Cover letter generation</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>PDF + DOCX download</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Auto-inject to forms</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Floating AI panel (all job boards)</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Resume chatbot edits</td><td class="cross">✕</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Application tracker</td><td class="cross">✕</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Break reminders + daily quotes</td><td class="cross">✕</td><td class="check">✓</td><td class="check">✓</td></tr>
+        <tr><td>Team admin dashboard</td><td class="cross">✕</td><td class="cross">✕</td><td class="check">✓</td></tr>
+        <tr><td>Support</td><td>Community</td><td>Email</td><td>Dedicated Slack</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <div class="faq-title">Common questions</div>
+    <div class="faq-item">
+      <div class="faq-q">Does the free plan give me the same AI quality as Pro?</div>
+      <div class="faq-a">Yes. Every plan uses the same Claude Haiku model and the same prompts. The only difference is how many ATS analyses you can run — not the quality of the tailored resume.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What counts as an ATS analysis?</div>
+      <div class="faq-a">Each time you click "Evaluate Match" in the floating panel, that uses one analysis. Resume tailoring is always free and unlimited. The analysis is the optional match-score breakdown showing what's missing from your resume for that specific JD.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I cancel anytime?</div>
+      <div class="faq-a">Yes. Cancel from your account settings anytime. You keep Pro access through the end of your billing period. No cancellation fees, no questions asked.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is my resume data private?</div>
+      <div class="faq-a">Your resume and job description text are sent to Claude for tailoring and then immediately discarded — not stored on any server. The only data we store is in your browser's local extension storage, which only you can access.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What is the application tracker?</div>
+      <div class="faq-a">Pro users get an automatically maintained log of every job they've applied to through ResumePilot — company name, role title, date applied, and which version of their resume was used. It's built from your real application activity, not manual entry.</div>
+    </div>
+  </div>
+
+  <div class="plans-footer">
+    Questions? <a href="mailto:support@resumepilot.ai">support@resumepilot.ai</a>
+    &nbsp;·&nbsp; <a href="#" id="btn-back-ext">← Back to extension</a>
+  </div>
+
+</div><!-- /page -->
+
+<!-- Coming soon modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <button class="modal-close" id="btn-modal-close">✕</button>
+    <div class="modal-icon">🚀</div>
+    <div class="modal-plan-name" id="modal-plan-name">PRO</div>
+    <div class="modal-title">Payments coming soon</div>
+    <div class="modal-body">
+      We're putting the finishing touches on our payment flow.<br><br>
+      <strong>Leave your email and you'll be first to know</strong> the moment Pro launches — plus get a special early-adopter discount.
+    </div>
+    <div class="modal-notify-form">
+      <input class="modal-notify-input" type="email" id="notify-email" placeholder="your@email.com">
+      <button class="modal-notify-btn" id="btn-notify">Notify me</button>
+    </div>
+    <div class="modal-notify-success" id="notify-success">✓ You're on the list! We'll email you when Pro launches.</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="plans.js"></script>
+</body>
+</html>

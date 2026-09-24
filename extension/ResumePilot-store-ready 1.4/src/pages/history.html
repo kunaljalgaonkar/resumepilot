@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>History · TrueResume</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="../../styles/base.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="topbar"></div>
+
+    <main class="flex-1" style="flex:1">
+      <div class="container py-10">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="label-overline mb-2">History</div>
+            <h1 class="text-4xl font-black tracking-tight">Past tailorings</h1>
+            <p class="mt-2 text-sm text-muted">Every run is saved so you can revisit, rename, compare, and re-download.</p>
+          </div>
+          <a class="btn" href="app.html" id="newTailorBtn"></a>
+        </div>
+
+        <div id="content"></div>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+  </div>
+
+  <script type="module" src="../../src/scripts/history.js"></script>
+</body>
+</html>

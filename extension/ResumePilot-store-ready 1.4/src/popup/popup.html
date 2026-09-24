@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ResumePilot</title>
+  <link rel="stylesheet" href="../../styles/base.css">
+  <style>
+    html, body { width: 300px; min-width: 300px; }
+    body { padding: 0; background: var(--bg); margin: 0; font-size: 13px; }
+    #app { display: flex; flex-direction: column; }
+
+    .topbar {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+      background: var(--ikb); color: white;
+    }
+    .topbar-mark {
+      width: 28px; height: 28px; background: rgba(255,255,255,0.18);
+      border-radius: 7px; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .topbar-mark svg { width: 15px; height: 15px; fill: white; }
+    .topbar-name { font-size: 13px; font-weight: 800; letter-spacing: -0.01em; display: block; }
+    .topbar-sub { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.55); display: block; margin-top: 1px; }
+
+    /* Account row */
+    .acct-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 11px 16px; border-bottom: 1px solid var(--border);
+      background: var(--neutral-50);
+    }
+    .acct-name { font-size: 12px; font-weight: 700; color: var(--fg); }
+    .acct-email { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .acct-out-row { padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--neutral-50); }
+    .acct-out-text { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+
+    /* FAB hint */
+    .hint-card {
+      margin: 14px 16px;
+      padding: 14px;
+      background: linear-gradient(135deg, #f0f4ff 0%, #f5f0ff 100%);
+      border: 1px solid #dde5ff; border-radius: 10px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .hint-fab {
+      width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: white;
+      box-shadow: 0 2px 10px rgba(37,99,235,0.35);
+    }
+    .hint-title { font-size: 12px; font-weight: 700; color: #1e3a8a; margin-bottom: 4px; }
+    .hint-body { font-size: 11.5px; color: #374151; line-height: 1.55; }
+
+    /* Action list */
+    .action-list { display: flex; flex-direction: column; gap: 1px; border-top: 1px solid var(--border); margin-top: 14px; }
+    .action-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; background: white;
+      border: none; font-family: inherit; font-size: 12px;
+      font-weight: 500; cursor: pointer; text-align: left;
+      color: var(--fg); border-bottom: 1px solid var(--border);
+      width: 100%; transition: background 0.1s;
+    }
+    .action-item:hover { background: #f8f9ff; color: var(--ikb); }
+    .action-item:last-child { border-bottom: none; }
+    .action-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+    .action-sub { font-size: 10px; color: var(--muted); font-weight: 400; display: block; margin-top: 1px; }
+    .action-item.signout:hover { background: #fff5f5; color: #dc2626; }
+
+    .popup-footer { padding: 10px 16px; text-align: center; font-size: 10px; color: var(--muted); font-family: "IBM Plex Mono", monospace; border-top: 1px solid var(--border); }
+
+    .toast-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #111; color: white; font-size: 11px;
+      text-align: center; padding: 7px;
+      transform: translateY(100%); transition: transform 0.2s;
+    }
+    .toast-bar.show { transform: translateY(0); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbar-mark">
+      <svg viewBox="0 0 256 256"><path d="M128 24l24 80 80 24-80 24-24 80-24-80-80-24 80-24z"/></svg>
+    </div>
+    <div>
+      <span class="topbar-name">RESUMEPILOT</span>
+      <span class="topbar-sub">AI Resume Tailor</span>
+    </div>
+  </div>
+
+  <!-- Signed in -->
+  <div class="acct-row hidden" id="acct-in">
+    <div>
+      <div class="acct-name" id="acct-name-val"></div>
+      <div class="acct-email" id="acct-email-val"></div>
+    </div>
+    <button class="btn btn-sm btn-outline" id="btn-signout">Sign out</button>
+  </div>
+
+  <!-- Signed out -->
+  <div class="acct-out-row hidden" id="acct-out">
+    <div class="acct-out-text">Not signed in yet.</div>
+    <button class="btn btn-sm" id="btn-signin-bar">Sign in / Create account →</button>
+  </div>
+
+  <!-- FAB hint -->
+  <div class="hint-card">
+    <div class="hint-fab">✦</div>
+    <div>
+      <div class="hint-title">Look for the ✦ button</div>
+      <div class="hint-body">Open any job listing and click the <strong>✦</strong> button in the bottom-right to tailor your resume, check your match score, and use the AI assistant.</div>
+    </div>
+  </div>
+
+  <!-- Action list -->
+  <div class="action-list">
+    <button class="action-item" id="btn-tracker">
+      <span class="action-icon">📋</span>
+      <span>Application Tracker<span class="action-sub">View your application history</span></span>
+    </button>
+    <button class="action-item" id="btn-edit-profile">
+      <span class="action-icon">📄</span>
+      <span>Edit Resume &amp; Profile<span class="action-sub">Update skills, experience, hidden projects</span></span>
+    </button>
+    <button class="action-item" id="btn-view-plans">
+      <span class="action-icon">✦</span>
+      <span>View Plans<span class="action-sub">Free · Pro $16.99 · Teams $9/seat</span></span>
+    </button>
+    <button class="action-item signout hidden" id="btn-signout-action">
+      <span class="action-icon">↩</span>
+      <span>Sign out</span>
+    </button>
+  </div>
+
+  <div class="popup-footer">v1.0 · ResumePilot</div>
+
+  <div class="toast-bar" id="toast"></div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>
