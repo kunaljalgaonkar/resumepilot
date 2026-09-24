@@ -322,32 +322,48 @@ async function handleAdmin(request, env) {
   const weekAgo = now - 7 * DAY;
   const fourWeeksAgo = now - 28 * DAY;
 
-  const [totalUsersRow, totalTailorsRow, totalAppsRow, activeWeekRow, feedbackRows, weeklySeriesRows, settingsRows] = await Promise.all([
-    env.DB.prepare(`SELECT COUNT(*) AS c FROM installs`).first(),
-    env.DB.prepare(`SELECT COUNT(*) AS c FROM events WHERE type = 'tailor'`).first(),
-    env.DB.prepare(`SELECT COUNT(*) AS c FROM events WHERE type = 'application'`).first(),
-    env.DB.prepare(`SELECT COUNT(DISTINCT anon_id) AS c FROM events WHERE ts >= ?`).bind(weekAgo).first(),
-    env.DB.prepare(`SELECT name, email, message, created_at FROM feedback ORDER BY created_at DESC LIMIT 200`).all(),
-    env.DB.prepare(
-      `SELECT (ts / (7*86400000)) AS week_bucket, COUNT(DISTINCT anon_id) AS active_users, COUNT(*) AS total_events
-       FROM events WHERE ts >= ? GROUP BY week_bucket ORDER BY week_bucket ASC`
-    ).bind(fourWeeksAgo).all(),
-    env.DB.prepare(`SELECT key, value FROM settings`).all()
-  ]);
+  let totalUsers = 0, totalTailors = 0, totalApps = 0, activeThisWeek = 0, feedback = [], weeklySeries = [];
+  try {
+    const [totalUsersRow, totalTailorsRow, totalAppsRow, activeWeekRow, feedbackRows, weeklySeriesRows] = await Promise.all([
+      env.DB.prepare(`SELECT COUNT(*) AS c FROM installs`).first(),
+      env.DB.prepare(`SELECT COUNT(*) AS c FROM events WHERE type = 'tailor'`).first(),
+      env.DB.prepare(`SELECT COUNT(*) AS c FROM events WHERE type = 'application'`).first(),
+      env.DB.prepare(`SELECT COUNT(DISTINCT anon_id) AS c FROM events WHERE ts >= ?`).bind(weekAgo).first(),
+      env.DB.prepare(`SELECT name, email, message, created_at FROM feedback ORDER BY created_at DESC LIMIT 200`).all(),
+      env.DB.prepare(
+        `SELECT (ts / (7*86400000)) AS week_bucket, COUNT(DISTINCT anon_id) AS active_users, COUNT(*) AS total_events
+         FROM events WHERE ts >= ? GROUP BY week_bucket ORDER BY week_bucket ASC`
+      ).bind(fourWeeksAgo).all()
+    ]);
+    totalUsers = totalUsersRow?.c || 0;
+    totalTailors = totalTailorsRow?.c || 0;
+    totalApps = totalAppsRow?.c || 0;
+    activeThisWeek = activeWeekRow?.c || 0;
+    feedback = feedbackRows?.results || [];
+    weeklySeries = weeklySeriesRows?.results || [];
+  } catch (err) {
+    // installs/events/feedback tables missing or a schema mismatch — show
+    // the page with zeros rather than a hard crash. This is the ONE thing
+    // an admin dashboard must never do: 500 the whole page because one
+    // number couldn't be computed.
+    console.error('admin stats query failed', err.message);
+  }
 
-  const totalUsers = totalUsersRow?.c || 0;
-  const totalTailors = totalTailorsRow?.c || 0;
-  const totalApps = totalAppsRow?.c || 0;
-  const activeThisWeek = activeWeekRow?.c || 0;
-  const feedback = feedbackRows?.results || [];
-  const weeklySeries = weeklySeriesRows?.results || [];
-
+  // settings is the newest table and the one most likely to be missing on
+  // a database that was set up before it existed — guarded separately so a
+  // missing settings table can never take down the stats above it, and
+  // vice versa.
   const config = { ...CONFIG_DEFAULTS };
-  for (const row of settingsRows?.results || []) {
-    if (CONFIG_KEYS.includes(row.key)) {
-      const n = Number(row.value);
-      if (Number.isFinite(n) && n > 0) config[row.key] = n;
+  try {
+    const settingsRows = await env.DB.prepare(`SELECT key, value FROM settings`).all();
+    for (const row of settingsRows?.results || []) {
+      if (CONFIG_KEYS.includes(row.key)) {
+        const n = Number(row.value);
+        if (Number.isFinite(n) && n > 0) config[row.key] = n;
+      }
     }
+  } catch (err) {
+    console.error('settings query failed — using defaults. Run the settings table CREATE statement if this persists.', err.message);
   }
 
   const html = renderAdminHTML({ totalUsers, totalTailors, totalApps, activeThisWeek, feedback, weeklySeries, config, adminKey: key });

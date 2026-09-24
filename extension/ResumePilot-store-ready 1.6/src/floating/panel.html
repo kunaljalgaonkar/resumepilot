@@ -19,7 +19,8 @@
       <div id="jd-dot-header" class="jd-dot-header"></div>
       <span id="jd-label-header" class="jd-label-header">Scanning…</span>
       <!-- Profile hub button -->
-      <button id="btn-profile-hub" class="icon-btn" style="margin-left:6px;font-size:13px" title="Profile & settings">👤</button>
+      <button id="btn-profile-hub" class="icon-btn" style="margin-left:6px;font-size:13px" data-tip="View your profile, application tracker, and plan.">👤</button>
+      <button id="btn-help-tour" class="rp-help-btn" title="Show me around" aria-label="Help / tour">?</button>
       <button id="btn-minimize" class="icon-btn">−</button>
     </div>
   </div>
@@ -34,10 +35,10 @@
       </div>
     </div>
     <div class="hub-divider"></div>
-    <button class="hub-item" id="hub-btn-profile">
+    <button class="hub-item" id="hub-btn-profile" data-tip="Edit the resume info we parsed, or upload a different resume.">
       <span>📄</span><span>Edit Resume & Profile</span>
     </button>
-    <button class="hub-item" id="hub-btn-tracker">
+    <button class="hub-item" id="hub-btn-tracker" data-tip="See every job you've applied to and its status.">
       <span>📋</span><span>Application Tracker</span>
     </button>
     <button class="hub-item" id="hub-btn-plans">
@@ -75,7 +76,7 @@
       </div>
       <div id="no-jd-msg" class="no-jd-msg hidden">No job description found on this page.</div>
 
-      <button id="btn-tailor-fab" class="btn-tailor hidden">⚡ Tailor for This Job</button>
+      <button id="btn-tailor-fab" class="btn-tailor hidden" data-tip="Rewrites your resume to match the job on this page." data-tour="1">⚡ Tailor for This Job</button>
 
       <div id="progress-area" class="hidden">
         <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
@@ -86,13 +87,13 @@
         <div class="result-row">
           <span class="result-label">Tailored ✓</span>
           <div style="display:flex;gap:5px">
-            <button id="btn-download-fab" class="btn-sm-outline">⬇</button>
-            <button id="btn-inject-fab" class="btn-sm-primary">↑ Inject</button>
+            <button id="btn-download-fab" class="btn-sm-outline" data-tip="Save the tailored resume as a PDF to your computer.">⬇</button>
+            <button id="btn-inject-fab" class="btn-sm-primary" data-tip="Auto-fill the tailored resume into this page's upload field, if there is one." data-tour="2">↑ Inject</button>
           </div>
         </div>
         <div class="result-row" style="border-top:1px solid var(--border)">
           <span class="result-label-sm">Cover letter</span>
-          <button id="btn-gen-cl-fab" class="btn-sm-outline">✦ Generate</button>
+          <button id="btn-gen-cl-fab" class="btn-sm-outline" data-tip="Writes a cover letter for this specific job, based on your resume.">✦ Generate</button>
         </div>
         <div id="cl-progress-area" class="hidden" style="margin-top:4px;padding:0 12px;">
           <div class="progress-bar-track"><div class="progress-bar-fill" id="cl-progress-fill"></div></div>
@@ -112,7 +113,7 @@
         </div>
         <div id="fab-ats-prompt" class="mini-ats-prompt hidden">
           <span id="fab-ats-count" class="mini-ats-count"></span>
-          <button id="btn-fab-evaluate" class="btn-sm-outline btn-xs">✦ Evaluate</button>
+          <button id="btn-fab-evaluate" class="btn-sm-outline btn-xs" data-tip="Scores how well your resume matches this job's requirements, and shows what's missing." data-tour="3">✦ Evaluate</button>
         </div>
         <div id="eval-progress-area" class="hidden" style="margin-top:8px;padding:0 12px;">
           <div class="progress-bar-track"><div class="progress-bar-fill" id="eval-progress-fill"></div></div>
@@ -124,21 +125,21 @@
             <span id="fab-ats-score" class="mini-score"></span>
           </div>
           <div id="fab-ats-missing"></div>
-          <button id="btn-reevaluate" class="btn-reevaluate hidden">↻ Re-evaluate</button>
+          <button id="btn-reevaluate" class="btn-reevaluate hidden" data-tip="Re-checks your score after you've added skills.">↻ Re-evaluate</button>
         </div>
       </div>
     </div>
 
     <!-- RIGHT COLUMN: Chatbot -->
-    <div class="col-right">
+    <div class="col-right" data-tour="4">
       <div class="chat-header">
         <span id="ai-star-icon" class="ai-star-icon">✦</span>
         <span class="chat-header-label">AI Assistant</span>
       </div>
       <div id="chat-messages" class="chat-messages"></div>
-      <div id="quick-actions" class="chat-quick-actions"></div>
+      <div id="quick-actions" class="chat-quick-actions" data-tip="Shortcuts for common edits — remove a section, shorten your summary, see your links, and more."></div>
       <div class="chat-input-row">
-        <input id="chat-input" class="chat-input" placeholder="Ask to change resume…" autocomplete="off">
+        <input id="chat-input" class="chat-input" placeholder="Ask to change resume…" autocomplete="off" data-tip="Ask for any change in plain English — e.g. &quot;make my summary shorter&quot; or &quot;add Python to skills&quot;.">
         <button id="btn-chat-send" class="chat-send-btn">↑</button>
       </div>
     </div>
@@ -168,6 +169,12 @@
   </div>
 
   <div id="error-msg" class="error-msg hidden"></div>
+
+  <!-- First-run guided tour (built dynamically by panel.js) -->
+  <div id="rp-tour-backdrop" class="rp-tour-backdrop hidden"></div>
+  <div id="rp-tour-highlight" class="rp-tour-highlight hidden"></div>
+  <div id="rp-tour-card" class="rp-tour-card hidden"></div>
+
   <script src="panel.js"></script>
 </body>
 </html>

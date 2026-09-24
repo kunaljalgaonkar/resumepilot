@@ -211,3 +211,107 @@ body {
 .panel-header { cursor: grab; user-select: none; }
 .panel-header:active { cursor: grabbing; }
 .panel-header button { cursor: pointer; }
+
+/* ── Onboarding tooltips ──────────────────────────────────────────────────
+   Custom hover tooltips for buttons throughout the panel, driven by a
+   data-tip attribute (rather than the native `title` attribute, which is
+   small, slow to appear, and unstyled — inconsistent with the rest of the
+   UI). Applied via JS to every element with data-tip, so adding a tooltip
+   to a new button anywhere just means adding one attribute. */
+[data-tip] { position: relative; }
+.rp-tooltip {
+  position: fixed;
+  z-index: 2147483000;
+  max-width: 220px;
+  padding: 7px 10px;
+  background: #111827;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  line-height: 1.45;
+  border-radius: 7px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+.rp-tooltip.visible { opacity: 1; transform: translateY(0); }
+.rp-tooltip::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 14px;
+  width: 8px;
+  height: 8px;
+  background: #111827;
+  transform: rotate(45deg);
+}
+.rp-tooltip.arrow-below::after { top: auto; bottom: -4px; }
+
+/* ── Help / tour trigger icon ── */
+.rp-help-btn {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.18);
+  color: #fff;
+  font-size: 12px; font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+.rp-help-btn:hover { background: rgba(255,255,255,0.3); }
+
+/* ── First-run guided tour ── */
+.rp-tour-backdrop {
+  position: fixed; inset: 0;
+  z-index: 2147482000;
+  background: rgba(15, 23, 42, 0.55);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.rp-tour-backdrop.visible { opacity: 1; }
+
+.rp-tour-highlight {
+  position: fixed;
+  z-index: 2147482100;
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.55), 0 0 0 2147483000px rgba(15,23,42,0.55);
+  pointer-events: none;
+  transition: top 0.25s ease, left 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+
+.rp-tour-card {
+  position: fixed;
+  z-index: 2147482200;
+  max-width: 260px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+  padding: 14px 16px;
+  font-family: 'DM Sans', sans-serif;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, top 0.25s ease, left 0.25s ease;
+}
+.rp-tour-card.visible { opacity: 1; transform: translateY(0); }
+.rp-tour-step-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--blue-mid); margin-bottom: 5px;
+}
+.rp-tour-title { font-size: 13.5px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+.rp-tour-body { font-size: 12px; color: #4b5563; line-height: 1.5; margin-bottom: 12px; }
+.rp-tour-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rp-tour-skip { background: none; border: none; font-size: 11.5px; color: #9ca3af; cursor: pointer; padding: 4px; }
+.rp-tour-skip:hover { color: #6b7280; }
+.rp-tour-next {
+  background: var(--blue); color: #fff; border: none; border-radius: 7px;
+  font-family: inherit; font-size: 12px; font-weight: 600; padding: 7px 14px; cursor: pointer;
+}
+.rp-tour-next:hover { background: var(--blue-mid); }
+.rp-tour-dots { display: flex; gap: 4px; margin-top: 10px; justify-content: center; }
+.rp-tour-dot { width: 5px; height: 5px; border-radius: 50%; background: #e5e7eb; }
+.rp-tour-dot.active { background: var(--blue-mid); width: 14px; border-radius: 3px; }
+

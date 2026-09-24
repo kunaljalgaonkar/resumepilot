@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ResumePilot – AI Resume Tailor",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Instantly tailors your resume and writes a cover letter for any job you apply to.",
   "permissions": [
     "storage",

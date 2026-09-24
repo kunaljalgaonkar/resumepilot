@@ -126,7 +126,207 @@ async function init() {
     if (!document.hidden) refreshSharedState();
   });
   window.addEventListener('focus', refreshSharedState);
+
+  // Tooltips + first-run tour. Wrapped separately from everything above —
+  // this is pure onboarding polish, never something that should be able to
+  // take down the actual panel if it throws.
+  try {
+    initTooltips();
+    initHelpTour();
+  } catch (_) {}
 }
+
+// ── Hover tooltips ──────────────────────────────────────────────────────
+// Any element with a data-tip attribute gets a small dark tooltip on hover,
+// positioned above (or below, if too close to the top of the panel) the
+// element. One shared tooltip DOM node is reused for all of them rather
+// than creating one per element — cheaper, and avoids z-index headaches
+// from dozens of tooltip nodes sitting in the layout at once.
+function initTooltips() {
+  const tip = document.createElement('div');
+  tip.className = 'rp-tooltip';
+  document.body.appendChild(tip);
+
+  let hideTimer = null;
+
+  function showTip(el) {
+    const text = el.getAttribute('data-tip');
+    if (!text) return;
+    clearTimeout(hideTimer);
+    tip.textContent = text;
+    tip.classList.remove('arrow-below');
+
+    const rect = el.getBoundingClientRect();
+    tip.style.left = '0px'; tip.style.top = '0px'; // reset before measuring
+    tip.classList.add('visible');
+    const tipRect = tip.getBoundingClientRect();
+
+    let left = rect.left + rect.width / 2 - tipRect.width / 2;
+    left = Math.max(6, Math.min(left, window.innerWidth - tipRect.width - 6));
+
+    let top = rect.top - tipRect.height - 10;
+    if (top < 4) {
+      // Not enough room above — flip below the element instead.
+      top = rect.bottom + 10;
+      tip.classList.add('arrow-below');
+    }
+
+    tip.style.left = `${left}px`;
+    tip.style.top = `${top}px`;
+  }
+
+  function hideTip() {
+    tip.classList.remove('visible');
+  }
+
+  // Event delegation on the body rather than one listener per tipped
+  // element — this also means elements added to the DOM LATER (quick
+  // action buttons, chips that render after AI responses, etc.) get
+  // tooltips automatically without any extra wiring, as long as they carry
+  // data-tip.
+  document.body.addEventListener('mouseover', e => {
+    const el = e.target.closest('[data-tip]');
+    if (el) showTip(el);
+  });
+  document.body.addEventListener('mouseout', e => {
+    const el = e.target.closest('[data-tip]');
+    if (el && !el.contains(e.relatedTarget)) hideTip();
+  });
+  document.body.addEventListener('focusin', e => {
+    const el = e.target.closest('[data-tip]');
+    if (el) showTip(el);
+  });
+  document.body.addEventListener('focusout', e => {
+    const el = e.target.closest('[data-tip]');
+    if (el) hideTip();
+  });
+  // Hide on scroll/resize so a stale tooltip doesn't float away from its
+  // anchor — cheap enough to just always hide rather than reposition.
+  window.addEventListener('scroll', hideTip, true);
+  window.addEventListener('resize', hideTip);
+}
+
+// ── First-run guided tour ───────────────────────────────────────────────
+// A short walkthrough for someone using the extension for the first time
+// with nobody there to explain it. Anchors to elements carrying
+// data-tour="N" in panel.html, walked in numeric order. Shown once
+// automatically (gated on a flag in chrome.storage.local so it survives
+// across page loads within the same install), and always replayable via
+// the "?" button in the header.
+const TOUR_STEPS = [
+  { anchor: '1', title: 'Start here', body: 'Tap "Tailor for This Job" any time you\'re on a job posting — it rewrites your resume to match it in about 30 seconds.' },
+  { anchor: '2', title: 'Get it onto the application', body: 'Once tailored, "Inject" auto-fills the resume into this page\'s upload field. Or use the download icon to save it as a PDF yourself.' },
+  { anchor: '3', title: 'Check your match', body: '"Evaluate" scores how well your resume covers what this job is asking for, and shows exactly which skills are missing.' },
+  { anchor: '4', title: 'Ask for anything', body: 'This chat can make any change in plain English — shorten your summary, add a skill, remove a section, or answer application questions using your resume.' },
+];
+
+function initHelpTour() {
+  const helpBtn = $('btn-help-tour');
+  if (helpBtn) helpBtn.addEventListener('click', () => runTour());
+
+  // Auto-run once per install, only once the panel actually has something
+  // to point at (a resume exists — otherwise "Tailor for This Job" isn't
+  // even visible yet, and the tour would be pointing at nothing).
+  send('GET_STORAGE', { keys: ['rpTourSeen'] }).then(stored => {
+    if (!stored.rpTourSeen && state.resumeData) {
+      // Small delay so the tour doesn't compete with the initial render —
+      // let the panel settle visually first.
+      setTimeout(() => runTour({ isFirstRun: true }), 600);
+    }
+  }).catch(() => {});
+}
+
+function runTour({ isFirstRun = false } = {}) {
+  const backdrop = $('rp-tour-backdrop');
+  const highlight = $('rp-tour-highlight');
+  const card = $('rp-tour-card');
+  if (!backdrop || !highlight || !card) return;
+
+  // Only step through anchors that actually exist and are visible right
+  // now — e.g. before a resume is tailored, the Inject/Evaluate buttons
+  // aren't in the DOM's visible flow yet. Skipping them rather than
+  // pointing at an invisible element keeps the tour coherent regardless
+  // of what state the panel happens to be in when replayed via "?".
+  const steps = TOUR_STEPS
+    .map(s => ({ ...s, el: document.querySelector(`[data-tour="${s.anchor}"]`) }))
+    .filter(s => s.el && s.el.offsetParent !== null);
+
+  if (!steps.length) return; // nothing visible to point at right now
+
+  let i = 0;
+  backdrop.classList.remove('hidden');
+  highlight.classList.remove('hidden');
+  card.classList.remove('hidden');
+  requestAnimationFrame(() => backdrop.classList.add('visible'));
+
+  function positionOn(el) {
+    const r = el.getBoundingClientRect();
+    const pad = 6;
+    highlight.style.top = `${r.top - pad}px`;
+    highlight.style.left = `${r.left - pad}px`;
+    highlight.style.width = `${r.width + pad * 2}px`;
+    highlight.style.height = `${r.height + pad * 2}px`;
+
+    // Card position: below the highlighted element if there's room,
+    // otherwise above it.
+    const cardWidth = 260;
+    let cardLeft = r.left;
+    cardLeft = Math.max(10, Math.min(cardLeft, window.innerWidth - cardWidth - 10));
+    let cardTop = r.bottom + pad + 12;
+    const estCardHeight = 140;
+    if (cardTop + estCardHeight > window.innerHeight) {
+      cardTop = r.top - pad - estCardHeight - 12;
+    }
+    card.style.left = `${cardLeft}px`;
+    card.style.top = `${Math.max(10, cardTop)}px`;
+  }
+
+  function renderStep() {
+    const step = steps[i];
+    positionOn(step.el);
+    const isLast = i === steps.length - 1;
+    card.innerHTML = `
+      <div class="rp-tour-step-label">Step ${i + 1} of ${steps.length}</div>
+      <div class="rp-tour-title">${step.title}</div>
+      <div class="rp-tour-body">${step.body}</div>
+      <div class="rp-tour-actions">
+        <button class="rp-tour-skip" id="rp-tour-skip-btn">Skip</button>
+        <button class="rp-tour-next" id="rp-tour-next-btn">${isLast ? 'Got it' : 'Next'}</button>
+      </div>
+      <div class="rp-tour-dots">
+        ${steps.map((_, idx) => `<span class="rp-tour-dot${idx === i ? ' active' : ''}"></span>`).join('')}
+      </div>
+    `;
+    requestAnimationFrame(() => card.classList.add('visible'));
+
+    $('rp-tour-next-btn')?.addEventListener('click', () => {
+      if (isLast) { endTour(); return; }
+      i++;
+      card.classList.remove('visible');
+      setTimeout(renderStep, 120);
+    });
+    $('rp-tour-skip-btn')?.addEventListener('click', endTour);
+  }
+
+  function endTour() {
+    backdrop.classList.remove('visible');
+    card.classList.remove('visible');
+    setTimeout(() => {
+      backdrop.classList.add('hidden');
+      highlight.classList.add('hidden');
+      card.classList.add('hidden');
+    }, 200);
+    if (isFirstRun) send('SET_STORAGE', { data: { rpTourSeen: true } });
+  }
+
+  // Clicking the dimmed backdrop itself also exits — matches how most
+  // guided-tour / modal patterns behave, so it's not a dead end if someone
+  // clicks outside the card by habit.
+  backdrop.onclick = endTour;
+
+  renderStep();
+}
+
 
 // Persist everything this panel produced, so the next page picks up exactly
 // where this one left off. Called after any mutation of the work product.
