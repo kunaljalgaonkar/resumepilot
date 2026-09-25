@@ -157,12 +157,36 @@ function initTooltips() {
     tip.classList.remove('arrow-below');
 
     const rect = el.getBoundingClientRect();
-    tip.style.left = '0px'; tip.style.top = '0px'; // reset before measuring
+    // Reset position AND make sure we're not measuring a stale size from
+    // the previous tooltip's (possibly longer/shorter) text — set text
+    // first, then measure, every time.
+    tip.style.left = '0px';
+    tip.style.top = '0px';
     tip.classList.add('visible');
     const tipRect = tip.getBoundingClientRect();
 
-    let left = rect.left + rect.width / 2 - tipRect.width / 2;
-    left = Math.max(6, Math.min(left, window.innerWidth - tipRect.width - 6));
+    const buttonCenterX = rect.left + rect.width / 2;
+
+    // This panel is a narrow iframe (LinkedIn/careers-page sidebar width,
+    // not a full browser window) — clamping the tooltip box to stay on
+    // screen is the COMMON case here, not a rare edge case. The bug this
+    // fixes: the arrow (::after) used to sit at a fixed offset from the
+    // tooltip's own left edge, so the moment the box got clamped away from
+    // being centered on the button, the arrow pointed at empty space
+    // instead of the button — exactly what showed up in the screenshot.
+    // Fix: compute where the arrow needs to sit WITHIN the box (as a
+    // percentage) so it always lands on the button's horizontal center,
+    // independent of how far the box itself got pushed to stay on screen.
+    let left = buttonCenterX - tipRect.width / 2;
+    const margin = 6;
+    left = Math.max(margin, Math.min(left, window.innerWidth - tipRect.width - margin));
+
+    // Arrow horizontal position = button center, expressed as an offset
+    // from the (possibly clamped) box's own left edge. Clamp the arrow
+    // itself too so it never renders outside the box's rounded corners.
+    let arrowLeft = buttonCenterX - left;
+    arrowLeft = Math.max(12, Math.min(arrowLeft, tipRect.width - 12));
+    tip.style.setProperty('--rp-tip-arrow-left', `${arrowLeft}px`);
 
     let top = rect.top - tipRect.height - 10;
     if (top < 4) {

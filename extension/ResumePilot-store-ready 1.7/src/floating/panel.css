@@ -235,13 +235,15 @@ body {
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.12s ease, transform 0.12s ease;
+  --rp-tip-arrow-left: 14px;
 }
 .rp-tooltip.visible { opacity: 1; transform: translateY(0); }
 .rp-tooltip::after {
   content: '';
   position: absolute;
   top: -4px;
-  left: 14px;
+  left: var(--rp-tip-arrow-left);
+  margin-left: -4px; /* center the 8px arrow on the computed point */
   width: 8px;
   height: 8px;
   background: #111827;
