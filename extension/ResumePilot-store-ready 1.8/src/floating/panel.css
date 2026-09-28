@@ -238,10 +238,13 @@ body {
   --rp-tip-arrow-left: 14px;
 }
 .rp-tooltip.visible { opacity: 1; transform: translateY(0); }
+/* Default: tooltip box sits ABOVE its target button, so the target is
+   BELOW the box — arrow goes at the box's BOTTOM edge, pointing down. */
 .rp-tooltip::after {
   content: '';
   position: absolute;
-  top: -4px;
+  top: auto;
+  bottom: -4px;
   left: var(--rp-tip-arrow-left);
   margin-left: -4px; /* center the 8px arrow on the computed point */
   width: 8px;
@@ -249,7 +252,13 @@ body {
   background: #111827;
   transform: rotate(45deg);
 }
-.rp-tooltip.arrow-below::after { top: auto; bottom: -4px; }
+/* .arrow-below = the tooltip BOX is below its target (JS flips here when
+   there's no room above, e.g. a button near the bottom of the panel), so
+   the target is ABOVE the box — arrow goes at the box's TOP edge instead,
+   pointing up. This name refers to where the BOX sits relative to the
+   target, not where the arrow itself is drawn — easy to mix up, which is
+   exactly what produced upside-down arrows on every tooltip before this. */
+.rp-tooltip.arrow-below::after { top: -4px; bottom: auto; }
 
 /* ── Help / tour trigger icon ── */
 .rp-help-btn {
