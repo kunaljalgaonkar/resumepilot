@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>New tailoring · TrueResume</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="../../styles/base.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div id="topbar"></div>
+
+    <main class="flex-1" style="flex:1">
+      <div class="container py-10">
+        <div class="mb-8">
+          <div class="label-overline mb-2">New tailoring</div>
+          <h1 class="text-4xl font-black tracking-tight">Tailor your resume to the role.</h1>
+          <p class="mt-2 text-sm text-muted" style="max-width:640px;line-height:1.6">
+            We use only what you provide. Nothing invented, nothing assumed. Upload your resume,
+            paste the job description, and optionally add context (extra projects, achievements)
+            you want considered.
+          </p>
+        </div>
+
+        <div class="banner banner-warning mb-8">
+          <span style="display:inline-flex;flex-shrink:0;margin-top:2px" id="warnIcon"></span>
+          <div class="text-sm">
+            <strong>Truthfulness lock.</strong> If a job requirement isn't in your resume or your
+            additional info, we won't add it. If you want it considered, paste it into "Additional
+            information" below.
+          </div>
+        </div>
+
+        <div class="grid grid-12">
+          <section class="col-7" style="display:flex;flex-direction:column;gap:24px">
+
+            <!-- Step 1: Resume -->
+            <div class="card">
+              <div class="card-h flex items-center justify-between">
+                <div>
+                  <div class="label-overline">Step 01</div>
+                  <h2 class="text-lg font-bold tracking-tight mt-1">Your resume</h2>
+                </div>
+                <div class="mono text-xs text-muted">PDF · DOCX · TXT</div>
+              </div>
+              <div class="card-b">
+                <button id="uploadBtn" class="upload-box" type="button"></button>
+                <input id="fileInput" type="file" accept=".pdf,.docx,.txt" hidden />
+                <div id="uploadedCard" class="hidden" style="border:1px solid var(--border);padding:12px;display:flex;align-items:center;gap:12px"></div>
+
+                <div class="mt-4">
+                  <label class="label-overline">Or paste resume text directly</label>
+                  <textarea id="resumeText" class="textarea mt-2" placeholder="Paste your resume text here if you'd rather not upload a file…"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: JD -->
+            <div class="card">
+              <div class="card-h">
+                <div class="label-overline">Step 02</div>
+                <h2 class="text-lg font-bold tracking-tight mt-1">Target job description</h2>
+              </div>
+              <div class="card-b">
+                <textarea id="jdInput" class="textarea" style="min-height:220px"
+                  placeholder="Paste the full job description here.&#10;&#10;Example:&#10;Senior Frontend Engineer at Acme...&#10;- Build performant React applications&#10;- Strong TypeScript experience&#10;..."></textarea>
+                <div id="jdCount" class="help mt-1 mono"></div>
+              </div>
+            </div>
+
+            <!-- Step 3: Additional -->
+            <div class="card">
+              <div class="card-h">
+                <div class="label-overline">Step 03 · Optional</div>
+                <h2 class="text-lg font-bold tracking-tight mt-1">Additional information</h2>
+                <p class="text-xs text-muted mt-1">
+                  Extra truthful context — projects, achievements, skills — that you want considered for relevance ranking.
+                </p>
+              </div>
+              <div class="card-b">
+                <textarea id="additional" class="textarea"
+                  placeholder="• Side project: built a real-time analytics dashboard with Next.js + Postgres&#10;• Led migration to Kubernetes in 2024 (not on current resume)"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <aside class="col-5" style="display:flex;flex-direction:column;gap:24px">
+
+            <!-- Outputs panel -->
+            <div class="card">
+              <div class="card-h">
+                <div class="label-overline">Outputs</div>
+                <h2 class="text-lg font-bold tracking-tight mt-1">What we'll generate</h2>
+              </div>
+              <div class="card-b" style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;align-items:center;gap:8px"><span class="text-success" id="ckIcon1"></span><span class="text-sm">Tailored Resume</span><span class="label-overline" style="margin-left:auto">included</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span class="text-success" id="ckIcon2"></span><span class="text-sm">ATS Match Analysis</span><span class="label-overline" style="margin-left:auto">included</span></div>
+                <div style="display:flex;align-items:center;gap:8px"><span class="text-success" id="ckIcon3"></span><span class="text-sm">Tailoring Change Summary</span><span class="label-overline" style="margin-left:auto">included</span></div>
+
+                <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div class="text-sm">
+                    <div class="font-bold">Cover Letter</div>
+                    <div class="text-xs text-muted">3–4 paragraphs, downloadable as PDF</div>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="includeCover" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+
+                <div>
+                  <div class="text-sm font-bold">Application questions</div>
+                  <div class="text-xs text-muted mb-2">Add common application questions you'd like drafted.</div>
+                  <div id="questions" style="display:flex;flex-direction:column;gap:8px"></div>
+                  <button type="button" id="addQ" class="text-xs label-overline text-ikb" style="background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-top:8px"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA panel -->
+            <div style="background:var(--neutral-900);color:white;padding:20px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <span style="color:#fbbf24" id="boltIcon"></span>
+                <div class="label-overline" style="color:#a3a3a3">Ready when you are</div>
+              </div>
+              <h3 class="text-2xl font-black tracking-tight" style="line-height:1.15">Tailor this application.</h3>
+              <p class="text-sm mt-1" style="color:#d4d4d4">Typical run: 10–25 seconds. Your data is stored only to power your history.</p>
+              <button id="submitBtn" class="btn btn-light btn-lg btn-block mt-4"></button>
+            </div>
+
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer"></div>
+  </div>
+
+  <script type="module" src="../../src/scripts/tailor.js"></script>
+</body>
+</html>
