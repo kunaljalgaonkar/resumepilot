@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Sign in · TrueResume</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="../../styles/base.css" />
+</head>
+<body>
+  <div class="app-shell" style="display:grid;grid-template-columns:1fr 1fr;min-height:100vh">
+    <!-- Left visual panel -->
+    <div style="position:relative;border-right:1px solid var(--border);overflow:hidden">
+      <img src="https://images.pexels.com/photos/6893329/pexels-photo-6893329.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=950&w=940"
+           alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+      <div style="position:absolute;inset:0;background:rgba(255,255,255,0.55)"></div>
+      <div style="position:relative;z-index:1;padding:48px;height:100%;display:flex;flex-direction:column;justify-content:space-between">
+        <a class="brand" href="auth.html">
+          <div class="mark"><svg viewBox="0 0 256 256"><path fill="white" d="M128 24l24 80 80 24-80 24-24 80-24-80-80-24 80-24z"/></svg></div>
+          <div class="name"><strong>TRUERESUME</strong><span>ATS Tailoring Engine</span></div>
+        </a>
+        <div style="max-width:440px">
+          <div class="label-overline mb-2">truthfulness first</div>
+          <p class="text-2xl font-bold tracking-tight" style="line-height:1.3">
+            "We never invent experience. We tailor what's already yours."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right form panel -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:48px">
+      <div style="width:100%;max-width:360px" id="formHost">
+        <!-- form is rendered by auth.js (login or register based on hash) -->
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="../../src/scripts/auth.js"></script>
+</body>
+</html>

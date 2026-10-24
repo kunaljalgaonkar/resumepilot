@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumePilot – Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar__logo">
+      <div class="logo-mark">✦</div>
+      <span>ResumePilot</span>
+    </div>
+    <nav class="sidebar__nav">
+      <button class="nav-item active" data-step="0"><span class="nav-num">01</span><span class="nav-label">Upload Resume</span></button>
+      <button class="nav-item" data-step="1"><span class="nav-num">02</span><span class="nav-label">Review Details</span></button>
+      <button class="nav-item" data-step="2"><span class="nav-num">03</span><span class="nav-label">Hidden Experience</span></button>
+      <button class="nav-item" data-step="3"><span class="nav-num">04</span><span class="nav-label">Skills</span></button>
+      <button class="nav-item" data-step="4"><span class="nav-num">05</span><span class="nav-label">Review & Save</span></button>
+    </nav>
+    <div class="sidebar__footer">
+      <div id="sidebar-user-info" style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+      <button id="btn-onboarding-logout" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer;width:100%;font-family:inherit">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- Step 0: Upload -->
+    <section class="step active" data-step="0">
+      <div class="step__header">
+        <h1>Upload Your Resume</h1>
+        <p>Our AI reads your resume and fills everything in automatically. No manual data entry.</p>
+      </div>
+      <div class="card">
+        <label class="label">Upload your resume PDF <span class="req">*</span></label>
+        <p class="hint">We extract all your experience, education, skills, and projects automatically.</p>
+        <div class="upload-area">
+          <input id="resume-file" type="file" accept=".pdf,.docx,.txt" style="display:none">
+          <label for="resume-file" class="upload-label">
+            <span class="upload-icon">📄</span>
+            <span class="upload-text">Click to choose your resume (PDF or Word)</span>
+            <span class="upload-sub">PDF or TXT, max 5MB</span>
+          </label>
+          <div id="resume-file-name" class="upload-file-name hidden"></div>
+        </div>
+        <div id="resume-status" class="key-status hidden"></div>
+        <button class="btn btn--primary" data-action="upload-resume" style="margin-top:16px;width:100%">
+          ✦ Parse Resume with AI
+        </button>
+
+        <!-- Paste fallback -->
+        <div id="paste-fallback" class="hidden" style="margin-top:24px">
+          <div class="divider-text">or paste your resume text</div>
+          <textarea id="resume-paste" class="textarea" rows="10" placeholder="Paste the full text of your resume here…" style="margin-top:12px"></textarea>
+          <button id="btn-parse-paste" class="btn btn--ghost" style="margin-top:8px">Parse Pasted Text</button>
+        </div>
+      </div>
+      <div class="step__footer">
+        <button class="btn btn--ghost" data-action="next">Skip – I'll fill in manually →</button>
+      </div>
+    </section>
+
+    <!-- Step 1: Review Parsed Details -->
+    <section class="step" data-step="1">
+      <div class="step__header">
+        <h1>Review Your Details</h1>
+        <p>The AI filled this in from your resume. Check it's correct and fix anything that's off.</p>
+      </div>
+      <div class="card">
+        <div class="grid-2">
+          <div class="field"><label class="label">Full Name <span class="req">*</span></label>
+            <input id="p-name" type="text" class="input" placeholder="Jane Smith"></div>
+          <div class="field"><label class="label">Email</label>
+            <input id="p-email" type="email" class="input" placeholder="jane@example.com"></div>
+          <div class="field"><label class="label">Phone</label>
+            <input id="p-phone" type="text" class="input" placeholder="+1 555-000-0000"></div>
+          <div class="field"><label class="label">Location</label>
+            <input id="p-location" type="text" class="input" placeholder="San Francisco, CA"></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="field"><label class="label">LinkedIn</label>
+            <input id="p-linkedin" type="text" class="input" placeholder="linkedin.com/in/…"></div>
+          <div class="field"><label class="label">Portfolio</label>
+            <input id="p-portfolio" type="text" class="input" placeholder="yoursite.com"></div>
+        </div>
+        <div class="grid-2" style="margin-top:12px">
+          <div class="field"><label class="label">GitHub</label>
+            <input id="p-github" type="text" class="input" placeholder="github.com/username"></div>
+        </div>
+        <p class="hint" style="margin-top:6px">We pull these from the clickable links in your uploaded file when we can find them — double-check they're right, and add/fix them here if needed.</p>
+        <div class="field" style="margin-top:16px"><label class="label">Professional Summary</label>
+          <p class="hint">AI filled this from your resume. You can edit it.</p>
+          <textarea id="p-summary" class="textarea" rows="4"></textarea>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Experience detected from your resume</h3>
+        <div id="exp-date-warning" class="hidden" style="margin-bottom:12px;padding:12px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:10px;font-size:12.5px;color:#78350f;line-height:1.5;"></div>
+        <div id="exp-summary" class="parsed-list"></div>
+        <p class="hint" style="margin-top:8px">You can add roles that aren't on your resume in the next step.</p>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:12px">Education detected from your resume</h3>
+        <div id="edu-summary" class="parsed-list"></div>
+      </div>
+
+      <div class="step__footer">
+        <button class="btn btn--ghost" data-action="prev">← Back</button>
+        <button class="btn btn--primary" data-action="next">Continue →</button>
+      </div>
+    </section>
+
+    <!-- Step 2: Hidden Experience -->
+    <section class="step" data-step="2">
+      <div class="step__header">
+        <h1>Hidden Experience</h1>
+        <p>Add any roles, projects, or experience <strong>not on your current resume</strong>. The AI will use these when they match a job you're applying to — so you don't miss relevant experience.</p>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">Additional Roles / Work Experience</h3>
+        <p class="hint">Freelance work, contract roles, internships, or anything you left off your resume.</p>
+        <div id="hidden-exp-list" style="margin-top:12px"></div>
+        <button class="btn btn--add" data-action="add-hidden-exp" style="margin-top:8px">+ Add Role</button>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h3 style="font-size:14px;font-weight:600;margin-bottom:4px">Additional Projects</h3>
+        <p class="hint">Side projects, open source contributions, academic projects not on your resume.</p>
+        <div id="hidden-proj-list" style="margin-top:12px"></div>
+        <button class="btn btn--add" data-action="add-hidden-proj" style="margin-top:8px">+ Add Project</button>
+      </div>
+
+      <div class="step__footer">
+        <button class="btn btn--ghost" data-action="prev">← Back</button>
+        <button class="btn btn--primary" data-action="next">Continue →</button>
+      </div>
+    </section>
+
+    <!-- Step 3: Skills -->
+    <section class="step" data-step="3">
+      <div class="step__header">
+        <h1>Skill Confidence</h1>
+        <p>Skills from your resume are pre-filled. Adjust the confidence sliders so the AI knows how prominently to feature each one. Add any skills your resume doesn't mention.</p>
+      </div>
+
+      <div class="card">
+        <div class="skill-add-row">
+          <input id="skill-input" type="text" class="input" placeholder="Add skills not on resume, e.g. Kubernetes, Figma…" style="flex:1">
+          <select id="skill-level" class="input" style="width:160px">
+            <option value="95">Expert (95%)</option>
+            <option value="80" selected>Proficient (80%)</option>
+            <option value="65">Intermediate (65%)</option>
+            <option value="40">Familiar (40%)</option>
+            <option value="20">Learning (20%)</option>
+          </select>
+          <button class="btn btn--primary" data-action="add-skill" style="white-space:nowrap">Add</button>
+        </div>
+        <p class="hint" style="margin-top:6px">Comma-separate to add multiple at once.</p>
+        <div id="skills-grid" class="skills-grid" style="margin-top:16px"></div>
+      </div>
+
+      <div class="step__footer">
+        <button class="btn btn--ghost" data-action="prev">← Back</button>
+        <button class="btn btn--primary" data-action="next">Continue →</button>
+      </div>
+    </section>
+
+    <!-- Step 4: Review & Save -->
+    <section class="step" data-step="4">
+      <div class="step__header">
+        <h1>Review & Save</h1>
+        <p>Everything look right? Hit save and start applying.</p>
+      </div>
+      <div id="review-panel" class="review-panel"></div>
+      <div class="step__footer">
+        <button class="btn btn--ghost" data-action="prev">← Back</button>
+        <button class="btn btn--primary btn--save" data-action="save">Save Profile ✓</button>
+      </div>
+      <div id="save-success" class="success-msg hidden" style="margin-top:16px">
+        ✦ Profile saved! Close this tab and start applying.
+      </div>
+    </section>
+
+  </main>
+</div>
+<script type="module" src="onboarding.js"></script>
+</body>
+</html>
